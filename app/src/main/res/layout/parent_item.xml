@@ -15,7 +15,7 @@
         android:textSize="18sp"
         tools:text="Title 1" />
 
-    <com.example.myapplication.ImpressionTrackingRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/child_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

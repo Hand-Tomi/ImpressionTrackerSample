@@ -2,28 +2,26 @@ package com.example.myapplication
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.ParentItemBinding
 
 class ParentItemAdapter(private val itemList: List<ParentItem>) :
-    ListAdapter<ParentItem, ParentViewHolder>(ParentDiffCallback) {
+    RecyclerView.Adapter<ParentItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): ParentViewHolder {
+    ): ViewHolder {
         val binding = ParentItemBinding.inflate(
             LayoutInflater.from(viewGroup.context),
             viewGroup,
             false
         )
-        return ParentViewHolder(binding)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-        holder: ParentViewHolder,
+        holder: ViewHolder,
         position: Int,
     ) {
         holder.bind(itemList[position])
@@ -32,23 +30,21 @@ class ParentItemAdapter(private val itemList: List<ParentItem>) :
     override fun getItemCount(): Int {
         return itemList.size
     }
-}
 
-private object ParentDiffCallback : DiffUtil.ItemCallback<ParentItem>() {
-    override fun areItemsTheSame(oldItem: ParentItem, newItem: ParentItem): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: ParentItem, newItem: ParentItem): Boolean {
-        return oldItem.parentItemTitle == newItem.parentItemTitle
-    }
-}
-
-class ParentViewHolder(
-    private val binding: ParentItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ParentItem) {
-        binding.parentItemTitle.text = item.parentItemTitle
-        binding.childRecyclerview.adapter = ChildItemAdapter(item.childItemList)
+    class ViewHolder(
+        private val binding: ParentItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: ParentItem) {
+            binding.parentItemTitle.text = item.parentItemTitle
+            binding.childRecyclerview.adapter = ChildItemAdapter(
+                title = item.parentItemTitle,
+                itemList = item.childItemList,
+            )
+        }
     }
 }
+
+class ParentItem(
+    var parentItemTitle: String,
+    var childItemList: List<ChildItem>
+)

@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun parentItemList(): List<ParentItem> {
         val itemList: MutableList<ParentItem> = ArrayList()
-        for (i in 1..10) {
+        for (i in 1..100) {
             itemList.add(
                 ParentItem(
                     parentItemTitle = "Title $i",
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun childItemList(): List<ChildItem> {
         val childItemList: MutableList<ChildItem> = ArrayList()
-        for (i in 1..10) {
+        for (i in 1..50) {
             childItemList.add(
                 ChildItem(
                     childItemTitle = "Card $i",

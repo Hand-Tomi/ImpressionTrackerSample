@@ -3,28 +3,28 @@ package com.example.myapplication
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.ChildItemBinding
 
-class ChildItemAdapter(private val itemList: List<ChildItem>) :
-    ListAdapter<ChildItem, ChildViewHolder>(ChildDiffCallback), ImpressionTrackable {
+class ChildItemAdapter(
+    private val title: String,
+    private val itemList: List<ChildItem>,
+) : ImpressionTrackableAdapter<ChildItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): ChildViewHolder {
+    ): ViewHolder {
         val binding = ChildItemBinding.inflate(
             LayoutInflater.from(viewGroup.context),
             viewGroup,
             false
         )
-        return ChildViewHolder(binding)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-        holder: ChildViewHolder,
+        holder: ViewHolder,
         position: Int,
     ) {
         holder.bind(itemList[position])
@@ -35,24 +35,18 @@ class ChildItemAdapter(private val itemList: List<ChildItem>) :
     }
 
     override fun onImpressionItem(position: Int) {
-        Log.v("###SON###", "onImpression $position")
+        Log.v("###SON###", "$title ${itemList[position].childItemTitle}")
+    }
+
+    class ViewHolder(
+        private val binding: ChildItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: ChildItem) {
+            binding.childItemTitle.text = item.childItemTitle
+        }
     }
 }
 
-private object ChildDiffCallback : DiffUtil.ItemCallback<ChildItem>() {
-    override fun areItemsTheSame(oldItem: ChildItem, newItem: ChildItem): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: ChildItem, newItem: ChildItem): Boolean {
-        return oldItem.childItemTitle == newItem.childItemTitle
-    }
-}
-
-class ChildViewHolder(
-    private val binding: ChildItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ChildItem) {
-        binding.childItemTitle.text = item.childItemTitle
-    }
-}
+class ChildItem(
+    var childItemTitle: String
+)
