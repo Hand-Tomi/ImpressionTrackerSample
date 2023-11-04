@@ -43,10 +43,8 @@ abstract class ImpressionTrackableAdapter<VH : RecyclerView.ViewHolder> : Recycl
     }
 
     private fun checkImpression() {
-        val newImpressionPositions = recyclerView
-            ?.getImpressionPositions()
-            ?.subtract(impressionPositions) ?: return
-        for (position in newImpressionPositions) {
+        val newImpressionPositions = recyclerView?.getImpressionPositions() ?: return
+        for (position in newImpressionPositions.minus(impressionPositions)) {
             onImpressionItem(position)
         }
         impressionPositions.clear()
