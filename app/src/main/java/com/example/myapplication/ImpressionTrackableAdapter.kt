@@ -6,7 +6,8 @@ import android.view.ViewTreeObserver
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class ImpressionTrackableAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+abstract class ImpressionTrackableAdapter<VH : RecyclerView.ViewHolder> :
+    RecyclerView.Adapter<VH>() {
 
     private val globalOnScrollChangedListener =
         ViewTreeObserver.OnScrollChangedListener { checkImpression() }
@@ -14,32 +15,26 @@ abstract class ImpressionTrackableAdapter<VH : RecyclerView.ViewHolder> : Recycl
     private var recyclerView: RecyclerView? = null
 
     abstract fun onImpressionItem(position: Int)
-
-    private val onAttachStateChangeListener = object: View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {
-            impressionPositions.clear()
-            v.viewTreeObserver.addOnScrollChangedListener(globalOnScrollChangedListener)
+    private val onAttachStateChangeListener = object : View.OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(view: View) {
+            view.viewTreeObserver.addOnScrollChangedListener(globalOnScrollChangedListener)
         }
 
-        override fun onViewDetachedFromWindow(v: View) {
-            v.viewTreeObserver.removeOnScrollChangedListener(globalOnScrollChangedListener)
+        override fun onViewDetachedFromWindow(view: View) {
+            view.viewTreeObserver.removeOnScrollChangedListener(globalOnScrollChangedListener)
         }
-    }
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        checkImpression()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
-        recyclerView.addOnAttachStateChangeListener(onAttachStateChangeListener)
+        recyclerView.viewTreeObserver.addOnScrollChangedListener(globalOnScrollChangedListener)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         this.recyclerView = null
-        recyclerView.removeOnAttachStateChangeListener(onAttachStateChangeListener)
+        recyclerView.viewTreeObserver.removeOnScrollChangedListener(globalOnScrollChangedListener)
     }
 
     private fun checkImpression() {
@@ -76,6 +71,7 @@ fun RecyclerView.getImpressionPositions(): Set<Int>? {
  * RecyclerViewが画面上で全て表示されているか
  */
 private fun RecyclerView.isRecyclerViewFullyVisible(): Boolean {
+    if (!this.isAttachedToWindow) return false
     val rect = Rect()
     val isVisibleRecyclerView = getGlobalVisibleRect(rect)
     if (!isVisibleRecyclerView) return false
